@@ -25,6 +25,7 @@ type view struct {
 	Title    string
 	Hostname string
 	IP       string
+	Error    error
 }
 
 func init() {
@@ -100,6 +101,17 @@ func setupRoutes(r martini.Router) {
 	// api
 	r.Get("/api/cpu", func(r render.Render) {
 		r.JSON(http.StatusOK, nil)
+	})
+	r.Get("/api/disk", func(r render.Render) {
+		disk, err := df()
+		if err != nil {
+			view := View("500 - Internal Server Error")
+			view.Error = err
+			r.HTML(http.StatusNotFound, "500", view)
+			return
+		}
+
+		r.JSON(http.StatusOK, disk)
 	})
 }
 
