@@ -1,0 +1,5 @@
+ForceCompile Yes
+CompleteBuild Yes
+
+GoplayDirectory /tmp/.goplay
+

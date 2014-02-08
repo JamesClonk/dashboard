@@ -1,0 +1,11 @@
+language: go
+go:
+  - 1.2
+env:
+  - GOARCH=amd64
+notifications:
+  email:
+    recipients:
+      - jamesclonk@jamesclonk.ch
+    on_success: change
+    on_failure: always
