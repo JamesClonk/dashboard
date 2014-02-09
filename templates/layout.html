@@ -6,12 +6,12 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/. 
 -->
 <head>
-	<title>{[{.Title}]} - {[{.Hostname}]}</title>
+	<title>{[{.Title}]} - {{Hostname}}</title>
 
 	<meta charset="utf-8">
 	<meta name="description" content="A simple Linux dashboard">
-    <meta name="author" content="JamesClonk">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="author" content="JamesClonk">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<link rel="stylesheet" href="/css/bootstrap.css">
@@ -29,7 +29,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 	<div class="container">
-
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" data-toggle="collapse" data-target="#navbar-collapse">
 				<span class="sr-only">Toggle navigation</span>
@@ -37,9 +36,19 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" ng-click="Goto('/')">{[{.Hostname}]} - {[{.IP}]}</a>
+			<a class="navbar-brand" ng-click="Goto('/')">{{Hostname}} - {{IP}}</a>
 		</div>
 
+		<div class="navbar-collapse collapse" ng-class="!navCollapsed && 'in'" id="navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="#"><i class="fa fa-bar-chart-o fa-2x"></i> <span class="hidden-sm">Overview</span></a></li>
+				<li><a href="#"><i class="fa fa-dashboard fa-2x"></i> <span class="hidden-sm hidden-md">CPU Usage</span></a></li>
+				<li><a href="#"><i class="fa fa-tasks fa-2x"></i> <span class="hidden-sm hidden-md">Memory Usage</span></a></li>
+				<li><a href="#"><i class="fa fa-hdd-o fa-2x"></i> <span class="hidden-sm hidden-md">Disk Usage</span></a></li>
+				<li><a href="#"><i class="fa fa-cogs fa-2x"></i> <span class="hidden-sm hidden-md">Processes</span></a></li>
+				<li><a href="#"><i class="fa fa-sitemap fa-2x"></i> <span class="hidden-sm hidden-md">Network</span></a></li>
+			</ul>
+		</div>
 	</div>
 </nav>
 

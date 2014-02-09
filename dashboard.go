@@ -8,7 +8,6 @@ import (
 	"github.com/codegangsta/martini"
 	"github.com/codegangsta/martini-contrib/render"
 	"log"
-	"net"
 	"net/http"
 	"os"
 )
@@ -17,50 +16,28 @@ var (
 	logFlags           = log.Ldate | log.Ltime
 	logPrefix          = "[dashboard] "
 	productionHostname = "jamesclonk.io"
-	currentHostname    = "localhost"
-	currentIP          = "0.0.0.0"
+	currentHostname    = ""
 )
 
 type view struct {
-	Title    string
-	Hostname string
-	IP       string
-	Error    error
+	Title string
+	Error error
 }
 
 func init() {
 	log.SetFlags(logFlags)
 	log.SetPrefix(logPrefix)
 
-	currentHostname = getCurrentHostname()
-	currentIP = getIP(currentHostname)
-}
-
-func getCurrentHostname() string {
-	hostname, err := os.Hostname()
-	if err != nil {
+	if hostname, err := hostname(); err != nil {
 		log.Fatalf("Encountered a problem while trying to lookup current hostname: %v", err)
+	} else {
+		currentHostname = hostname
 	}
 
-	if hostname == productionHostname {
+	if currentHostname == productionHostname {
 		log.Printf("Running on %s, switch to production settings\n", productionHostname)
 		martini.Env = martini.Prod
 	}
-
-	return hostname
-}
-
-func getIP(hostname string) string {
-	ips, err := net.LookupIP(hostname)
-	if err != nil {
-		log.Fatalf("Encountered a problem while trying to lookup IP address of [%s]: %v", hostname, err)
-	}
-
-	if len(ips) > 0 {
-		return ips[0].String()
-	}
-
-	return ""
 }
 
 func main() {
@@ -99,15 +76,31 @@ func setupRoutes(r martini.Router) {
 	})
 
 	// api
+	r.Get("/api/hostname", func(r render.Render) {
+		r.JSON(http.StatusOK, struct{ Hostname string }{currentHostname})
+	})
+
+	r.Get("/api/ip", func(r render.Render) {
+		ips, err := ip(currentHostname)
+		if err != nil {
+			view := View("500 - Internal Server Error")
+			view.Error = err
+			r.HTML(http.StatusInternalServerError, "500", view)
+			return
+		}
+		r.JSON(http.StatusOK, ips)
+	})
+
 	r.Get("/api/cpu", func(r render.Render) {
 		r.JSON(http.StatusOK, nil)
 	})
+
 	r.Get("/api/disk", func(r render.Render) {
 		disk, err := df()
 		if err != nil {
 			view := View("500 - Internal Server Error")
 			view.Error = err
-			r.HTML(http.StatusNotFound, "500", view)
+			r.HTML(http.StatusInternalServerError, "500", view)
 			return
 		}
 
@@ -117,8 +110,6 @@ func setupRoutes(r martini.Router) {
 
 func View(title string) *view {
 	return &view{
-		Title:    title,
-		Hostname: currentHostname,
-		IP:       currentIP,
+		Title: title,
 	}
 }

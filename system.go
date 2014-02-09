@@ -8,10 +8,36 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"net"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
 )
+
+func hostname() (string, error) {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return "", err
+	}
+	return hostname, nil
+}
+
+func ip(hostname string) ([]string, error) {
+	ips, err := net.LookupIP(hostname)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ips) > 0 {
+		result := make([]string, len(ips))
+		for _, ip := range ips {
+			result = append(result, ip.String())
+		}
+		return result, nil
+	}
+	return nil, errors.New("could not figure out IP address")
+}
 
 type DiskUsage struct {
 	Filesystem      string
@@ -63,11 +89,11 @@ func pipes(commands ...*exec.Cmd) (string, error) {
 	}
 	var stdout bytes.Buffer
 
-	for i := range commands[:len(commands)-1] {
-		if pipe, err := commands[i].StdoutPipe(); err != nil {
+	for c := range commands[:len(commands)-1] {
+		if pipe, err := commands[c].StdoutPipe(); err != nil {
 			return "", err
 		} else {
-			commands[i+1].Stdin = pipe
+			commands[c+1].Stdin = pipe
 		}
 	}
 	commands[len(commands)-1].Stdout = &stdout
