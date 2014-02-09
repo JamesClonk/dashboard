@@ -39,6 +39,50 @@ func ip(hostname string) ([]string, error) {
 	return nil, errors.New("could not figure out IP address")
 }
 
+type CPU struct {
+	Processors int
+}
+
+func cpu() (diskUsage []*DiskUsage, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("%v", r))
+		}
+	}()
+
+	out, err := pipes(
+		exec.Command("cat", "/proc/cpuinfo"),
+		//exec.Command("grep", "-c", "processor"),
+	)
+
+	// out, err := pipes(
+	// 	exec.Command("cat", "/proc/loadavg"),
+	// 	exec.Command("awk", `{print $1";"$2";"$3"}`),
+	// )
+
+	cpus := strings.Split(strings.Trim(out, " \t\n"), "\n\n")
+	for _, line := range lines[1:] {
+		values := strings.Split(line, ":")
+
+		percentage, err := strconv.Atoi(strings.Trim(values[4], "% \t\n"))
+		if err != nil {
+			return nil, err
+		}
+
+		diskUsage = append(diskUsage,
+			&DiskUsage{
+				Filesystem:      values[0],
+				Size:            values[1],
+				Used:            values[2],
+				Available:       values[3],
+				UsagePercentage: percentage,
+				MountedOn:       values[5],
+			})
+	}
+
+	return diskUsage, err
+}
+
 type DiskUsage struct {
 	Filesystem      string
 	Size            string

@@ -92,6 +92,7 @@ func setupRoutes(r martini.Router) {
 	})
 
 	r.Get("/api/cpu", func(r render.Render) {
+		cpu()
 		r.JSON(http.StatusOK, nil)
 	})
 
