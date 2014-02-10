@@ -41,6 +41,8 @@ func ip(hostname string) ([]string, error) {
 
 type CPU struct {
 	Processors int
+	ModelName  string
+	Speed      int
 }
 
 func cpu() (diskUsage []*DiskUsage, err error) {
@@ -52,13 +54,23 @@ func cpu() (diskUsage []*DiskUsage, err error) {
 
 	out, err := pipes(
 		exec.Command("cat", "/proc/cpuinfo"),
-		//exec.Command("grep", "-c", "processor"),
+		exec.Command("grep", "-c", "processor"),
 	)
 
-	// out, err := pipes(
-	// 	exec.Command("cat", "/proc/loadavg"),
-	// 	exec.Command("awk", `{print $1";"$2";"$3"}`),
-	// )
+	out, err := pipes(
+		exec.Command("cat", "/proc/cpuinfo"),
+		exec.Command("grep", "model name"),
+	)
+
+	out, err := pipes(
+		exec.Command("cat", "/proc/cpuinfo"),
+		exec.Command("grep", frequency),
+	)
+
+	out, err := pipes(
+		exec.Command("cat", "/proc/loadavg"),
+		exec.Command("awk", `{print $1";"$2";"$3"}`),
+	)
 
 	cpus := strings.Split(strings.Trim(out, " \t\n"), "\n\n")
 	for _, line := range lines[1:] {
