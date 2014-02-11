@@ -20,6 +20,12 @@ func Expect(t *testing.T, got interface{}, expected interface{}) {
 	}
 }
 
+func NotExpect(t *testing.T, got interface{}, expected interface{}) {
+	if reflect.DeepEqual(expected, got) {
+		t.Errorf("Expected [%v] not to be [%v]", expected, got)
+	}
+}
+
 func Contain(t *testing.T, body string, expected string) {
 	if !strings.Contains(body, expected) {
 		t.Errorf("Expected body to contain [%v]", expected)
@@ -39,4 +45,8 @@ func Contains(t *testing.T, got []interface{}, expected interface{}) {
 		}
 	}
 	t.Errorf("Expected slice to contain [%v]", expected)
+}
+
+func Trim(input string) string {
+	return strings.Trim(input, "\t\n\f\r ")
 }

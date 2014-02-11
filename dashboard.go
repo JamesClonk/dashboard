@@ -31,7 +31,7 @@ func init() {
 	if hostname, err := hostname(); err != nil {
 		log.Fatalf("Encountered a problem while trying to lookup current hostname: %v", err)
 	} else {
-		currentHostname = hostname
+		currentHostname = hostname.Hostname
 	}
 
 	if currentHostname == productionHostname {
@@ -76,37 +76,23 @@ func setupRoutes(r martini.Router) {
 	})
 
 	// api
-	r.Get("/api/hostname", func(r render.Render) {
-		r.JSON(http.StatusOK, struct{ Hostname string }{currentHostname})
-	})
+	r.Get("/api/hostname", DataHandler(hostname()))
+	r.Get("/api/ip", DataHandler(ip(currentHostname)))
+	r.Get("/api/cpu", DataHandler(cpu()))
+	r.Get("/api/mem", DataHandler(mem()))
+	r.Get("/api/disk", DataHandler(df()))
+}
 
-	r.Get("/api/ip", func(r render.Render) {
-		ips, err := ip(currentHostname)
+func DataHandler(data interface{}, err error) func(r render.Render) {
+	return func(r render.Render) {
 		if err != nil {
 			view := View("500 - Internal Server Error")
 			view.Error = err
 			r.HTML(http.StatusInternalServerError, "500", view)
 			return
 		}
-		r.JSON(http.StatusOK, ips)
-	})
-
-	r.Get("/api/cpu", func(r render.Render) {
-		cpu()
-		r.JSON(http.StatusOK, nil)
-	})
-
-	r.Get("/api/disk", func(r render.Render) {
-		disk, err := df()
-		if err != nil {
-			view := View("500 - Internal Server Error")
-			view.Error = err
-			r.HTML(http.StatusInternalServerError, "500", view)
-			return
-		}
-
-		r.JSON(http.StatusOK, disk)
-	})
+		r.JSON(http.StatusOK, data)
+	}
 }
 
 func View(title string) *view {

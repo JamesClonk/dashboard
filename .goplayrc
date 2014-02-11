@@ -1,5 +1,7 @@
 ForceCompile Yes
 CompleteBuild Yes
+HotReload Yes
+HotReloadRecursive Yes
 
 GoplayDirectory /tmp/.goplay
 

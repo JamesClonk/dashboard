@@ -6,6 +6,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/codegangsta/martini"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -84,6 +86,15 @@ func Test_todoapp_404(t *testing.T) {
 
 func Test_todoapp_500(t *testing.T) {
 	m := setupMartini()
+	r := martini.NewRouter()
+	m.Action(r.Handle)
+
+	hostname := currentHostname
+	defer func() {
+		currentHostname = hostname
+	}()
+	currentHostname = "will_cause_error"
+	r.Get("/api/ip", DataHandler(ip(currentHostname)))
 
 	response := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "http://localhost:4005/api/ip", nil)
@@ -91,11 +102,6 @@ func Test_todoapp_500(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	hostname := currentHostname
-	defer func() {
-		currentHostname = hostname
-	}()
-	currentHostname = "will_cause_error"
 	m.ServeHTTP(response, req)
 	Expect(t, response.Code, http.StatusInternalServerError)
 
@@ -116,18 +122,21 @@ func Test_todoapp_api_GetHostname(t *testing.T) {
 	m.ServeHTTP(response, req)
 	Expect(t, response.Code, http.StatusOK)
 
-	hostname, err := hostname()
+	host, err := hostname()
 	if err != nil {
 		t.Fatal(err)
 	}
+	if host.Hostname == "" {
+		t.Fatal("could not figure out hostname")
+	}
 	body := response.Body.String()
-	Contain(t, body, `"Hostname": "`+hostname)
+	Contain(t, body, `"Hostname": "`+host.Hostname)
 
 	var data struct{ Hostname string }
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
-	Expect(t, data, struct{ Hostname string }{hostname})
+	Expect(t, data, struct{ Hostname string }{host.Hostname})
 }
 
 func Test_todoapp_api_GetIP(t *testing.T) {
@@ -142,16 +151,22 @@ func Test_todoapp_api_GetIP(t *testing.T) {
 	m.ServeHTTP(response, req)
 	Expect(t, response.Code, http.StatusOK)
 
-	hostname, err := hostname()
+	host, err := hostname()
 	if err != nil {
 		t.Fatal(err)
 	}
-	ips, err := ip(hostname)
+	ips, err := ip(host.Hostname)
 	if err != nil {
 		t.Fatal(err)
 	}
+	if len(ips) == 0 {
+		t.Fatal("no IPs found")
+	}
+	body := response.Body.String()
+	Contain(t, body, `"`+ips[0]+`",`)
+
 	var data []string
-	if err := json.Unmarshal([]byte(response.Body.String()), &data); err != nil {
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
 	Expect(t, data, ips)
@@ -169,7 +184,57 @@ func Test_todoapp_api_GetCPU(t *testing.T) {
 	m.ServeHTTP(response, req)
 	Expect(t, response.Code, http.StatusOK)
 
-	t.Fail()
+	cpuData, err := cpu()
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := response.Body.String()
+	Contain(t, body, fmt.Sprintf(`"Processors": %d`, cpuData.Processors))
+	Contain(t, body, fmt.Sprintf(`"ModelName": "%s"`, cpuData.ModelName))
+	Contain(t, body, fmt.Sprintf(`"Speed": %0.0f`, cpuData.Speed))
+	Contain(t, body, `"Load": [`)
+	Expect(t, len(cpuData.Load), 3)
+
+	var data *CPU
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		t.Fatal(err)
+	}
+	Expect(t, data, cpuData)
+}
+
+func Test_todoapp_api_GetMemory(t *testing.T) {
+	m := setupMartini()
+
+	response := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "http://localhost:4005/api/mem", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.ServeHTTP(response, req)
+	Expect(t, response.Code, http.StatusOK)
+
+	memory, err := mem()
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := response.Body.String()
+	Contain(t, body, `"RAM": {`)
+	Contain(t, body, `"Swap": {`)
+	Contain(t, body, `"Total": {`)
+	Contain(t, body, `"TotalM": `)
+	Contain(t, body, `"FreeH": `)
+	Contain(t, body, `"UsedM": `)
+	NotExpect(t, memory.RAM.TotalM, 0)
+	NotExpect(t, memory.RAM.FreeM, 0)
+	NotExpect(t, memory.Total.TotalM, 0)
+	NotExpect(t, memory.Total.FreeM, 0)
+
+	var data *Memory
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		t.Fatal(err)
+	}
+	Expect(t, data, memory)
 }
 
 func Test_todoapp_api_GetDisk(t *testing.T) {
@@ -188,8 +253,13 @@ func Test_todoapp_api_GetDisk(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	body := response.Body.String()
+	Contain(t, body, `"MountedOn": "/"`)
+	Contain(t, body, `"Filesystem": "tmpfs",`)
+	NotExpect(t, len(disks), 1)
+
 	var data []*DiskUsage
-	if err := json.Unmarshal([]byte(response.Body.String()), &data); err != nil {
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
 	Expect(t, data, disks)
