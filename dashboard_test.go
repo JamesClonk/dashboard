@@ -191,9 +191,11 @@ func Test_todoapp_api_GetCPU(t *testing.T) {
 	body := response.Body.String()
 	Contain(t, body, fmt.Sprintf(`"Processors": %d`, cpuData.Processors))
 	Contain(t, body, fmt.Sprintf(`"ModelName": "%s"`, cpuData.ModelName))
-	Contain(t, body, fmt.Sprintf(`"Speed": %0.0f`, cpuData.Speed))
+	Contain(t, body, `"Speed": `)
 	Contain(t, body, `"Load": [`)
 	Expect(t, len(cpuData.Load), 3)
+	Expect(t, cpuData.Processors >= 1, true)
+	Expect(t, cpuData.Speed > 1000, true)
 
 	var data *CPU
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
@@ -263,4 +265,19 @@ func Test_todoapp_api_GetDisk(t *testing.T) {
 		t.Fatal(err)
 	}
 	Expect(t, data, disks)
+}
+
+func Test_todoapp_api_GetLoggedOn(t *testing.T) {
+	m := setupMartini()
+
+	response := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "http://localhost:4005/api/logged_on", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.ServeHTTP(response, req)
+	Expect(t, response.Code, http.StatusOK)
+
+	t.Fail()
 }

@@ -11,8 +11,13 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
+)
+
+var (
+	rxW = regexp.MustCompile(`^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$`)
 )
 
 func hostname() (struct{ Hostname string }, error) {
@@ -237,6 +242,37 @@ func df() (diskUsage []*DiskUsage, err error) {
 	}
 
 	return diskUsage, err
+}
+
+type LoggedOn struct {
+	User  string
+	TTY   string
+	From  string
+	Login string
+	Idle  string
+	JCPU  string
+	PCPU  string
+	What  string
+}
+
+func w() (loggedOn []*LoggedOn, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("%v", r))
+		}
+	}()
+
+	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih
+	out, err := pipes(
+		exec.Command("PROCPS_USERLEN=24", "PROCPS_FROMLEN=64", "w", "-ih"),
+	)
+	lines := strings.Split(Trim(out), "\n")
+	for _, line := range lines {
+		result := rxW.FindAllStringSubmatch(line, 8)
+		fmt.Println(result)
+	}
+
+	return loggedOn, err
 }
 
 func pipes(commands ...*exec.Cmd) (string, error) {
