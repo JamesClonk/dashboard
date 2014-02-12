@@ -76,22 +76,44 @@ func setupRoutes(r martini.Router) {
 	})
 
 	// api
-	r.Get("/api/hostname", DataHandler(hostname()))
-	r.Get("/api/ip", DataHandler(ip(currentHostname)))
-	r.Get("/api/cpu", DataHandler(cpu()))
-	r.Get("/api/mem", DataHandler(mem()))
-	r.Get("/api/disk", DataHandler(df()))
-	r.Get("/api/logged_on", DataHandler(w()))
+	r.Get("/api/hostname", DataHandler("hostname"))
+	r.Get("/api/ip", DataHandler("ip"))
+	r.Get("/api/cpu", DataHandler("cpu"))
+	r.Get("/api/mem", DataHandler("mem"))
+	r.Get("/api/disk", DataHandler("disk"))
+	r.Get("/api/logged_on", DataHandler("logged_on"))
+	r.Get("/api/users", DataHandler("passwd"))
 }
 
-func DataHandler(data interface{}, err error) func(r render.Render) {
+func DataHandler(method string) func(r render.Render) {
 	return func(r render.Render) {
+		var data interface{}
+		var err error
+
+		switch method {
+		case "hostname":
+			data, err = hostname()
+		case "ip":
+			data, err = ip(currentHostname)
+		case "cpu":
+			data, err = cpu()
+		case "mem":
+			data, err = mem()
+		case "disk":
+			data, err = df()
+		case "logged_on":
+			data, err = w()
+		case "passwd":
+			data, err = passwd()
+		}
+
 		if err != nil {
 			view := View("500 - Internal Server Error")
 			view.Error = err
 			r.HTML(http.StatusInternalServerError, "500", view)
 			return
 		}
+
 		r.JSON(http.StatusOK, data)
 	}
 }

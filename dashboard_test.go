@@ -94,7 +94,7 @@ func Test_todoapp_500(t *testing.T) {
 		currentHostname = hostname
 	}()
 	currentHostname = "will_cause_error"
-	r.Get("/api/ip", DataHandler(ip(currentHostname)))
+	r.Get("/api/ip", DataHandler("ip"))
 
 	response := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "http://localhost:4005/api/ip", nil)
@@ -132,11 +132,11 @@ func Test_todoapp_api_GetHostname(t *testing.T) {
 	body := response.Body.String()
 	Contain(t, body, `"Hostname": "`+host.Hostname)
 
-	var data struct{ Hostname string }
+	var data Host
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
-	Expect(t, data, struct{ Hostname string }{host.Hostname})
+	Expect(t, data, Host{host.Hostname})
 }
 
 func Test_todoapp_api_GetIP(t *testing.T) {
@@ -279,5 +279,51 @@ func Test_todoapp_api_GetLoggedOn(t *testing.T) {
 	m.ServeHTTP(response, req)
 	Expect(t, response.Code, http.StatusOK)
 
-	t.Fail()
+	loggedOn, err := w()
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := response.Body.String()
+	Contain(t, body, `"TTY": `)
+	Contain(t, body, `"Login": `)
+	NotExpect(t, len(loggedOn), 0)
+
+	var data []*LoggedOn
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		t.Fatal(err)
+	}
+	Expect(t, data, loggedOn)
+}
+
+func Test_todoapp_api_GetUsers(t *testing.T) {
+	m := setupMartini()
+
+	response := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "http://localhost:4005/api/users", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.ServeHTTP(response, req)
+	Expect(t, response.Code, http.StatusOK)
+
+	users, err := passwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := response.Body.String()
+	Contain(t, body, `"Type": "system",`)
+	Contain(t, body, `"Type": "user",`)
+	Contain(t, body, `"Name": "root"`)
+	Contain(t, body, `"Description": `)
+	Contain(t, body, `"Home": "/root"`)
+	Contain(t, body, `"Shell": "/bin/bash"`)
+	Contain(t, body, `"Shell": "/bin/false"`)
+	Expect(t, len(users) >= 5, true)
+
+	var data []*User
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		t.Fatal(err)
+	}
+	Expect(t, data, users)
 }

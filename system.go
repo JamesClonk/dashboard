@@ -20,12 +20,16 @@ var (
 	rxW = regexp.MustCompile(`^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$`)
 )
 
-func hostname() (struct{ Hostname string }, error) {
+type Host struct {
+	Hostname string
+}
+
+func hostname() (*Host, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		return struct{ Hostname string }{}, err
+		return nil, err
 	}
-	return struct{ Hostname string }{hostname}, nil
+	return &Host{hostname}, nil
 }
 
 func ip(hostname string) (result []string, err error) {
@@ -262,17 +266,67 @@ func w() (loggedOn []*LoggedOn, err error) {
 		}
 	}()
 
-	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih
+	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih | grep -v 'w -ih
+	os.Setenv("PROCPS_USERLEN", "24")
+	os.Setenv("PROCPS_FROMLEN", "64")
 	out, err := pipes(
-		exec.Command("PROCPS_USERLEN=24", "PROCPS_FROMLEN=64", "w", "-ih"),
+		exec.Command("w", "-ih"),
+		exec.Command("grep", "-v", "w -ih"),
 	)
 	lines := strings.Split(Trim(out), "\n")
 	for _, line := range lines {
 		result := rxW.FindAllStringSubmatch(line, 8)
-		fmt.Println(result)
+		if len(result) > 0 {
+			loggedOn = append(loggedOn,
+				&LoggedOn{
+					User:  result[0][1],
+					TTY:   result[0][2],
+					From:  result[0][3],
+					Login: result[0][4],
+					Idle:  result[0][5],
+					JCPU:  result[0][6],
+					PCPU:  result[0][7],
+					What:  Trim(result[0][8]),
+				})
+		}
 	}
 
 	return loggedOn, err
+}
+
+type User struct {
+	Type        string
+	Name        string
+	Description string
+	Home        string
+	Shell       string
+}
+
+func passwd() (users []*User, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("%v", r))
+		}
+	}()
+
+	// awk -F: '{ if ($3<=499) print "system;"$1";"$5";"$6";"$7; else print "user;"$1";"$5";"$6";"$7; }' /etc/passwd
+	out, err := pipes(
+		exec.Command("awk", "-F:", `{ if ($3<=499) print "system;"$1";"$5";"$6";"$7; else print "user;"$1";"$5";"$6";"$7; }`, "/etc/passwd"),
+	)
+	lines := strings.Split(Trim(out), "\n")
+	for _, line := range lines {
+		values := strings.SplitN(line, ";", 5)
+		users = append(users,
+			&User{
+				Type:        values[0],
+				Name:        values[1],
+				Description: values[2],
+				Home:        values[3],
+				Shell:       values[4],
+			})
+	}
+
+	return users, err
 }
 
 func pipes(commands ...*exec.Cmd) (string, error) {
