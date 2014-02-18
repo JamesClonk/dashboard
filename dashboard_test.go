@@ -194,7 +194,7 @@ func Test_todoapp_api_GetCPU(t *testing.T) {
 	Contain(t, body, `"Speed": `)
 	Contain(t, body, `"Load1": `)
 	Contain(t, body, `"Load5": `)
-	Contain(t, body, `"Load10": `)
+	Contain(t, body, `"Load15": `)
 	Contain(t, body, `"Processes": `)
 	Expect(t, cpuData.Load1 > 0, true)
 	Contain(t, cpuData.Processes, `/`)

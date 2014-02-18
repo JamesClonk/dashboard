@@ -10,12 +10,17 @@ var dashboard = angular.module('dashboard', [
 var dashboardControllers = angular.module('dashboardControllers', []);
 
 // main controller
-dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location',
-	function($scope, $http, $location) {
+dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location', '$anchorScroll',
+	function($scope, $http, $location, $anchorScroll) {
 
 		$scope.Goto = function(path) {
 			$location.path(path);
 		};
+
+		$scope.ScrollTo = function(id) {
+			$location.hash(id);
+			$anchorScroll();
+		}
 
 		$scope.LoadHostname = function(callback) {
 			$http.get('/api/hostname').success(function(data) {

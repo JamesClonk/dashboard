@@ -3,33 +3,42 @@
 	<div class="col-sm-7 col-md-5 col-lg-5">
 		<div id="cpu" class="panel panel-warning">
 			<div class="panel-heading">
-				<h3 class="panel-title">CPU</h3>
+				<h3 class="panel-title">{{CPU.ModelName}}</h3>
 			</div>
 
-			<ul class="list-group">
-				<li class="list-group-item"><span class="label label-warning">Processors / Cores</span>&nbsp;{{CPU.Processors}}</li>
-				<li class="list-group-item"><span class="label label-warning">Speed</span>&nbsp;{{CPU.Speed}} MHz</li>
-				<li class="list-group-item"><span class="label label-warning">Model</span>&nbsp;{{CPU.ModelName}}</li>
-			</ul>
+			<table class="table">
+				<tbody>
+					<tr>
+						<td><span class="label label-warning">Processors / Cores</span></td>
+						<td>{{CPU.Processors}}</td>
+					</tr>
+					<tr>
+						<td><span class="label label-warning">Speed</span></td>
+						<td>{{CPU.Speed}} MHz</td>
+					</tr>
+				</tbody>
+			</table>
 
 			<br/>
 			<div class="panel-heading">
 				<h3 class="panel-title">Load Average</h3>
 			</div>
 
-			<table class="table table-hover">
+			<table class="table">
 				<thead>
 					<tr>
 						<th>1 min</th>
 						<th>5 min</th>
-						<th>10 min</th>
+						<th>15 min</th>
+						<th>Procs</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>{{CPU.Load[0]}}</td>
-						<td>{{CPU.Load[1]}}</td>
-						<td>{{CPU.Load[2]}}</td>
+						<td>{{CPU.Load1}}</td>
+						<td>{{CPU.Load5}}</td>
+						<td>{{CPU.Load15}}</td>
+						<td>{{CPU.Processes}}</td>
 					</tr>
 				</tbody>
 			</table>

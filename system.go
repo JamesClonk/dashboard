@@ -55,7 +55,7 @@ type CPU struct {
 	Speed      float64
 	Load1      float64
 	Load5      float64
-	Load10     float64
+	Load15     float64
 	Processes  string
 }
 
@@ -116,7 +116,7 @@ func cpu() (result *CPU, err error) {
 	}
 	result.Load1 = loads[0]
 	result.Load5 = loads[0]
-	result.Load10 = loads[0]
+	result.Load15 = loads[0]
 	result.Processes = fields[3]
 
 	return result, err
