@@ -35,24 +35,4 @@ Media Queries
 		z-index:-1; 
 		visibility: hidden;
 	}
-	div.row {
-		padding: 0px 5px 0px 5px;
-	}
-}
-
-@media (max-width: 479px) {
-	body {
-		padding: 0px;
-	}
-	.container {
-		padding: 0px;
-		margin: 0px;
-	}
-	.navbar {
-		padding: 0px 15px 0px 15px;
-		margin: 0px;
-	}
-	div.row {
-		padding: 0px 15px 0px 15px;
-	}
 }

@@ -40,9 +40,19 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
 			});
 		};
 
+		$scope.LoadCPU = function(callback) {
+			$http.get('/api/cpu').success(function(data) {
+				$scope.CPU = data;
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
 		$scope.LoadAllData = function(callback) {
 			$scope.LoadHostname();
 			$scope.LoadIP();
+			$scope.LoadCPU();
 
 			if (callback) {
 				callback();

@@ -53,7 +53,10 @@ type CPU struct {
 	Processors int
 	ModelName  string
 	Speed      float64
-	Load       []float64
+	Load1      float64
+	Load5      float64
+	Load10     float64
+	Processes  string
 }
 
 func cpu() (result *CPU, err error) {
@@ -97,21 +100,24 @@ func cpu() (result *CPU, err error) {
 	}
 	result.Speed = speed
 
-	// cat /proc/loadavg | awk '{print $1";"$2";"$3;}'
+	// cat /proc/loadavg | awk '{print $1";"$2";"$3";"$4;}'
 	out, err = pipes(
 		exec.Command("cat", "/proc/loadavg"),
-		exec.Command("awk", `{print $1";"$2";"$3;}`),
+		exec.Command("awk", `{print $1";"$2";"$3";"$4;}`),
 	)
-	fields := strings.SplitN(Trim(out), ";", 3)
-	var load []float64
-	for _, field := range fields {
-		number, err := strconv.ParseFloat(Trim(field), 64)
+	fields := strings.SplitN(Trim(out), ";", 43)
+	var loads []float64
+	for i := 0; i < 3; i++ {
+		number, err := strconv.ParseFloat(Trim(fields[i]), 64)
 		if err != nil {
 			return nil, err
 		}
-		load = append(load, number)
+		loads = append(loads, number)
 	}
-	result.Load = load
+	result.Load1 = loads[0]
+	result.Load5 = loads[0]
+	result.Load10 = loads[0]
+	result.Processes = fields[3]
 
 	return result, err
 }

@@ -34,7 +34,7 @@ func Test_todoapp_index(t *testing.T) {
 	body := response.Body.String()
 	Contain(t, body, `<html lang="en" ng-app="dashboard" ng-controller="dashboardCtrl">`)
 	Contain(t, body, `<title>Dashboard - {{Hostname}}</title>`)
-	Contain(t, body, `<div ng-view></div>`)
+	Contain(t, body, `<div ng-view>`)
 }
 
 func Test_todoapp_assets(t *testing.T) {
@@ -192,8 +192,12 @@ func Test_todoapp_api_GetCPU(t *testing.T) {
 	Contain(t, body, fmt.Sprintf(`"Processors": %d`, cpuData.Processors))
 	Contain(t, body, fmt.Sprintf(`"ModelName": "%s"`, cpuData.ModelName))
 	Contain(t, body, `"Speed": `)
-	Contain(t, body, `"Load": [`)
-	Expect(t, len(cpuData.Load), 3)
+	Contain(t, body, `"Load1": `)
+	Contain(t, body, `"Load5": `)
+	Contain(t, body, `"Load10": `)
+	Contain(t, body, `"Processes": `)
+	Expect(t, cpuData.Load1 > 0, true)
+	Contain(t, cpuData.Processes, `/`)
 	Expect(t, cpuData.Processors >= 1, true)
 	Expect(t, cpuData.Speed > 1000, true)
 

@@ -1,1 +1,39 @@
-<div ng-view></div>
+<div ng-view>
+
+	<div class="col-sm-7 col-md-5 col-lg-5">
+		<div id="cpu" class="panel panel-warning">
+			<div class="panel-heading">
+				<h3 class="panel-title">CPU</h3>
+			</div>
+
+			<ul class="list-group">
+				<li class="list-group-item"><span class="label label-warning">Processors / Cores</span>&nbsp;{{CPU.Processors}}</li>
+				<li class="list-group-item"><span class="label label-warning">Speed</span>&nbsp;{{CPU.Speed}} MHz</li>
+				<li class="list-group-item"><span class="label label-warning">Model</span>&nbsp;{{CPU.ModelName}}</li>
+			</ul>
+
+			<br/>
+			<div class="panel-heading">
+				<h3 class="panel-title">Load Average</h3>
+			</div>
+
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>1 min</th>
+						<th>5 min</th>
+						<th>10 min</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{{CPU.Load[0]}}</td>
+						<td>{{CPU.Load[1]}}</td>
+						<td>{{CPU.Load[2]}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
