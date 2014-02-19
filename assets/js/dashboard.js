@@ -54,10 +54,64 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
 			});
 		};
 
+		$scope.LoadMemory = function(callback) {
+			$http.get('/api/mem').success(function(data) {
+				$scope.Memory = data;
+				for (var i in $scope.Memory) {
+					$scope.Memory[i].UsedPercentage = Math.round(($scope.Memory[i].UsedM / $scope.Memory[i].TotalM) * 100);
+					$scope.Memory[i].FreePercentage = Math.round(($scope.Memory[i].FreeM / $scope.Memory[i].TotalM) * 100);
+					$scope.Memory[i].Class = "progress-bar-success";
+					if ($scope.Memory[i].UsedPercentage > 85) {
+						$scope.Memory[i].Class = "progress-bar-danger";
+					} else if ($scope.Memory[i].UsedPercentage > 65) {
+						$scope.Memory[i].Class = "progress-bar-warning";
+					} else if ($scope.Memory[i].UsedPercentage > 45) {
+						$scope.Memory[i].Class = "progress-bar-primary";
+					}
+				}
+
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
+		$scope.LoadDisk = function(callback) {
+			$http.get('/api/disk').success(function(data) {
+				$scope.Disk = data;
+				for (var i in $scope.Disk) {
+					$scope.Disk[i].Class = "progress-bar-success";
+					if ($scope.Disk[i].UsagePercentage > 85) {
+						$scope.Disk[i].Class = "progress-bar-danger";
+					} else if ($scope.Disk[i].UsagePercentage > 65) {
+						$scope.Disk[i].Class = "progress-bar-warning";
+					} else if ($scope.Disk[i].UsagePercentage > 45) {
+						$scope.Disk[i].Class = "progress-bar-primary";
+					}
+				}
+
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
+		$scope.LoadUsers = function(callback) {
+			$http.get('/api/users').success(function(data) {
+				$scope.Users = data;
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
 		$scope.LoadAllData = function(callback) {
 			$scope.LoadHostname();
 			$scope.LoadIP();
 			$scope.LoadCPU();
+			$scope.LoadMemory();
+			$scope.LoadDisk();
+			$scope.LoadUsers();
 
 			if (callback) {
 				callback();

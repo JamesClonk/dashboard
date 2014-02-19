@@ -25,6 +25,11 @@ a {
 	cursor: pointer;
 }
 
+#cpu, #memory, #disk, #users, #processes, #network {
+	padding-top: 75px; 
+	margin-top: -75px;
+}
+
 /*
 ---------------------------------------------------
 Media Queries

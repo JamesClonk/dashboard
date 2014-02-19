@@ -115,8 +115,8 @@ func cpu() (result *CPU, err error) {
 		loads = append(loads, number)
 	}
 	result.Load1 = loads[0]
-	result.Load5 = loads[0]
-	result.Load15 = loads[0]
+	result.Load5 = loads[1]
+	result.Load15 = loads[2]
 	result.Processes = fields[3]
 
 	return result, err
