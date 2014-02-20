@@ -141,6 +141,56 @@
 		</div>
 	</div>
 
+	<div id="processes" class="col-sm-12 col-md-9 col-lg-8">
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-cogs fa-fw"></i>  Process Statistics</h3>
+			</div>
+
+			<div class="panel-body">
+				<ul class="list-group">
+					<li class="list-group-item" ng-repeat="heading in Processes.Header">{{heading}}</li>
+				</ul>
+			</div>
+
+			<div class="panel-heading">
+				<h3 class="panel-title">Processes - Top 10</h3>
+			</div>
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th><a ng-click="SortField = 'User'; reverse = !reverse;">User</a></th>
+						<th><a ng-click="SortField = 'Pid'; reverse = !reverse;">Pid</a></th>
+						<th><a ng-click="SortField = 'Cpu'; reverse = !reverse;">Cpu</a></th>
+						<th><a ng-click="SortField = 'Mem'; reverse = !reverse;">Mem</a></th>
+						<th><a ng-click="SortField = 'Vsz'; reverse = !reverse;">Vsz</a></th>
+						<th><a ng-click="SortField = 'Rss'; reverse = !reverse;">Rss</a></th>
+						<th><a ng-click="SortField = 'Tty'; reverse = !reverse;">Tty</a></th>
+						<!--<th>Stat</th>-->
+						<th><a ng-click="SortField = 'Start'; reverse = !reverse;">Start</a></th>
+						<th><a ng-click="SortField = 'Time'; reverse = !reverse;">Time</a></th>
+						<th><a ng-click="SortField = 'Command'; reverse = !reverse;">Command</a></th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="data in Processes.Processes | orderBy:SortField:reverse | limitTo:10">
+					<tr>
+						<td><strong>{{data.User}}</strong></td>
+						<td>{{data.Pid}}</td>
+						<td>{{data.Cpu}}</td>
+						<td>{{data.Mem}}</td>
+						<td>{{data.Vsz}}</td>
+						<td>{{data.Rss}}</td>
+						<td>{{data.Tty}}</td>
+						<!--<td>{{data.Stat}}</td>-->
+						<td>{{data.Start}}</td>
+						<td>{{data.Time}}</td>
+						<td><small>{{data.Command}}</small></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
 	<div id="users" class="col-sm-12 col-md-9 col-lg-8">
 		<div class="panel panel-warning">
 			<div class="panel-heading">

@@ -81,6 +81,7 @@ func setupRoutes(r martini.Router) {
 	r.Get("/api/cpu", DataHandler("cpu"))
 	r.Get("/api/mem", DataHandler("mem"))
 	r.Get("/api/disk", DataHandler("disk"))
+	r.Get("/api/processes", DataHandler("top"))
 	r.Get("/api/logged_on", DataHandler("logged_on"))
 	r.Get("/api/users", DataHandler("passwd"))
 }
@@ -101,6 +102,8 @@ func DataHandler(method string) func(r render.Render) {
 			data, err = mem()
 		case "disk":
 			data, err = df()
+		case "top":
+			data, err = top()
 		case "logged_on":
 			data, err = w()
 		case "passwd":

@@ -105,6 +105,17 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
 			});
 		};
 
+		$scope.LoadProcesses = function(callback) {
+			$http.get('/api/processes').success(function(data) {
+				$scope.Processes = data;
+				$scope.reverse = true;
+				$scope.SortField = "Cpu";
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
 		$scope.LoadAllData = function(callback) {
 			$scope.LoadHostname();
 			$scope.LoadIP();
@@ -112,6 +123,7 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
 			$scope.LoadMemory();
 			$scope.LoadDisk();
 			$scope.LoadUsers();
+			$scope.LoadProcesses();
 
 			if (callback) {
 				callback();

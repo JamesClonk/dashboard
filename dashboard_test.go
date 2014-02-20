@@ -205,7 +205,9 @@ func Test_todoapp_api_GetCPU(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
-	Expect(t, data, cpuData)
+	Expect(t, data.ModelName, cpuData.ModelName)
+	Expect(t, data.Processors, cpuData.Processors)
+	Expect(t, data.Speed, cpuData.Speed)
 }
 
 func Test_todoapp_api_GetMemory(t *testing.T) {
@@ -240,7 +242,9 @@ func Test_todoapp_api_GetMemory(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
-	Expect(t, data, memory)
+	Expect(t, data.Total.TotalM, memory.Total.TotalM)
+	Expect(t, data.Swap, memory.Swap)
+	Expect(t, data.RAM.TotalH, memory.RAM.TotalH)
 }
 
 func Test_todoapp_api_GetDisk(t *testing.T) {
@@ -271,6 +275,38 @@ func Test_todoapp_api_GetDisk(t *testing.T) {
 	Expect(t, data, disks)
 }
 
+func Test_todoapp_api_GetProcesses(t *testing.T) {
+	m := setupMartini()
+
+	response := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "http://localhost:4005/api/processes", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.ServeHTTP(response, req)
+	Expect(t, response.Code, http.StatusOK)
+
+	processes, err := top()
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := response.Body.String()
+	Contain(t, body, `"Header": [`)
+	Contain(t, body, `"Tasks: `)
+	Contain(t, body, `"Processes": [`)
+	Contain(t, body, `"User": "`)
+	Contain(t, body, `"Command": "`)
+	Contain(t, body, `"Tty": "`)
+	Expect(t, len(processes.Processes) > 5, true)
+
+	var data *Top
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		t.Fatal(err)
+	}
+	Expect(t, len(data.Processes), len(processes.Processes))
+}
+
 func Test_todoapp_api_GetLoggedOn(t *testing.T) {
 	m := setupMartini()
 
@@ -296,7 +332,11 @@ func Test_todoapp_api_GetLoggedOn(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
 		t.Fatal(err)
 	}
-	Expect(t, data, loggedOn)
+	if len(data) > 0 {
+		Expect(t, data[0].User, loggedOn[0].User)
+		Expect(t, data[0].From, loggedOn[0].From)
+		Expect(t, data[0].TTY, loggedOn[0].TTY)
+	}
 }
 
 func Test_todoapp_api_GetUsers(t *testing.T) {

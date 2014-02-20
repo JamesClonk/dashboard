@@ -17,7 +17,8 @@ import (
 )
 
 var (
-	rxW = regexp.MustCompile(`^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$`)
+	rxW  = regexp.MustCompile(`^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$`)
+	rxPs = regexp.MustCompile(`^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$`)
 )
 
 type Host struct {
@@ -252,6 +253,94 @@ func df() (diskUsage []*DiskUsage, err error) {
 	}
 
 	return diskUsage, err
+}
+
+type Top struct {
+	Header    []string
+	Processes []*Process
+}
+
+type Process struct {
+	User    string
+	Pid     float64
+	Cpu     float64
+	Mem     float64
+	Vsz     float64
+	Rss     float64
+	Tty     string
+	Stat    string
+	Start   string
+	Time    string
+	Command string
+}
+
+func top() (data *Top, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("%v", r))
+		}
+	}()
+	data = &Top{}
+
+	// top -b -n 1 2>/dev/null | head -n 5
+	out, err := pipes(
+		exec.Command("top", "-b", "-n", "1"),
+		exec.Command("head", "-n", "5"),
+	)
+	data.Header = strings.Split(Trim(out), "\n")
+
+	// ps -aux | tail -n +2 | grep -v 'ps -aux' | sort -nr -k6
+	out, err = pipes(
+		exec.Command("ps", "-aux"),
+		exec.Command("tail", "-n", "+2"),
+		exec.Command("grep", "-v", "ps -aux"),
+		exec.Command("sort", "-nr", "-k6"),
+	)
+	lines := strings.Split(Trim(out), "\n")
+	for _, line := range lines {
+
+		result := rxPs.FindAllStringSubmatch(line, 11)
+		if len(result) > 0 && !(result[0][5] == "0" && result[0][6] == "0") {
+
+			pid, err := strconv.ParseFloat(Trim(result[0][2]), 64)
+			if err != nil {
+				return nil, err
+			}
+			cpu, err := strconv.ParseFloat(Trim(result[0][3]), 64)
+			if err != nil {
+				return nil, err
+			}
+			mem, err := strconv.ParseFloat(Trim(result[0][4]), 64)
+			if err != nil {
+				return nil, err
+			}
+			vsz, err := strconv.ParseFloat(Trim(result[0][5]), 64)
+			if err != nil {
+				return nil, err
+			}
+			rss, err := strconv.ParseFloat(Trim(result[0][6]), 64)
+			if err != nil {
+				return nil, err
+			}
+
+			data.Processes = append(data.Processes,
+				&Process{
+					User:    result[0][1],
+					Pid:     pid,
+					Cpu:     cpu,
+					Mem:     mem,
+					Vsz:     vsz,
+					Rss:     rss,
+					Tty:     result[0][7],
+					Stat:    result[0][8],
+					Start:   result[0][9],
+					Time:    result[0][10],
+					Command: Trim(result[0][11]),
+				})
+		}
+	}
+
+	return data, err
 }
 
 type LoggedOn struct {
