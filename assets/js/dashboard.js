@@ -105,11 +105,29 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
 			});
 		};
 
+		$scope.LoadLoggedOn = function(callback) {
+			$http.get('/api/logged_on').success(function(data) {
+				$scope.LoggedOn = data;
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
 		$scope.LoadProcesses = function(callback) {
 			$http.get('/api/processes').success(function(data) {
 				$scope.Processes = data;
 				$scope.reverse = true;
 				$scope.SortField = "Cpu";
+				if (callback) {
+					callback();
+				}
+			});
+		};
+
+		$scope.LoadNetwork = function(callback) {
+			$http.get('/api/network').success(function(data) {
+				$scope.Network = data;
 				if (callback) {
 					callback();
 				}
@@ -123,7 +141,9 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
 			$scope.LoadMemory();
 			$scope.LoadDisk();
 			$scope.LoadUsers();
+			$scope.LoadLoggedOn();
 			$scope.LoadProcesses();
+			$scope.LoadNetwork();
 
 			if (callback) {
 				callback();

@@ -105,7 +105,7 @@
 		</div>
 	</div>
 
-	<div id="disk" class="col-sm-12 col-md-9 col-lg-8">
+	<div id="disk" class="col-sm-12 col-md-11 col-lg-10">
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="fa fa-hdd-o fa-fw"></i> Disk Usage</h3>
@@ -141,7 +141,7 @@
 		</div>
 	</div>
 
-	<div id="processes" class="col-sm-12 col-md-9 col-lg-8">
+	<div id="processes" class="col-sm-12 col-md-11 col-lg-10">
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="fa fa-cogs fa-fw"></i>  Process Statistics</h3>
@@ -191,7 +191,67 @@
 		</div>
 	</div>
 
-	<div id="users" class="col-sm-12 col-md-9 col-lg-8">
+	<div id="network" class="col-sm-12 col-md-11 col-lg-10">
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-sitemap fa-fw"></i> Network</h3>
+			</div>
+
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="data in Network">
+					<tr>
+						<td><strong>{{data.Name}}</strong></td>
+						<td>{{data.Type}}</td>
+						<td>{{data.Value}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div id="users-online" class="col-sm-12 col-md-11 col-lg-10">
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-users fa-fw"></i> Online</h3>
+			</div>
+
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>User</th>
+						<th>TTY</th>
+						<th>From</th>
+						<th>Login</th>
+						<th>Idle</th>
+						<th>JCPU</th>
+						<th>PCPU</th>
+						<th>What</th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="data in LoggedOn">
+					<tr>
+						<td><strong>{{data.User}}</strong></td>
+						<td>{{data.TTY}}</td>
+						<td>{{data.From}}</td>
+						<td>{{data.Login}}</td>
+						<td>{{data.Idle}}</td>
+						<td>{{data.JCPU}}</td>
+						<td>{{data.PCPU}}</td>
+						<td>{{data.What}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div id="users" class="col-sm-12 col-md-11 col-lg-10">
 		<div class="panel panel-warning">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="fa fa-users fa-fw"></i> Users</h3>

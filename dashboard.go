@@ -84,6 +84,7 @@ func setupRoutes(r martini.Router) {
 	r.Get("/api/processes", DataHandler("top"))
 	r.Get("/api/logged_on", DataHandler("logged_on"))
 	r.Get("/api/users", DataHandler("passwd"))
+	r.Get("/api/network", DataHandler("network"))
 }
 
 func DataHandler(method string) func(r render.Render) {
@@ -108,6 +109,8 @@ func DataHandler(method string) func(r render.Render) {
 			data, err = w()
 		case "passwd":
 			data, err = passwd()
+		case "network":
+			data, err = network()
 		}
 
 		if err != nil {

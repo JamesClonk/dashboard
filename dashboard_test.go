@@ -371,3 +371,32 @@ func Test_todoapp_api_GetUsers(t *testing.T) {
 	}
 	Expect(t, data, users)
 }
+
+func Test_todoapp_api_GetNetwork(t *testing.T) {
+	m := setupMartini()
+
+	response := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "http://localhost:4005/api/network", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.ServeHTTP(response, req)
+	Expect(t, response.Code, http.StatusOK)
+
+	network, err := network()
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := response.Body.String()
+	Contain(t, body, `"Name": "lo",`)
+	Contain(t, body, `"Type": "inet",`)
+	Contain(t, body, `"Value": "`)
+	Expect(t, len(network) >= 1, true)
+
+	var data []*If
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		t.Fatal(err)
+	}
+	Expect(t, data, network)
+}

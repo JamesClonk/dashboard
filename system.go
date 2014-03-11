@@ -424,6 +424,38 @@ func passwd() (users []*User, err error) {
 	return users, err
 }
 
+type If struct {
+	Name  string
+	Type  string
+	Value string
+}
+
+func network() (network []*If, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("%v", r))
+		}
+	}()
+
+	// ip -o addr | awk '{print $2";"$3";"$4;}'
+	out, err := pipes(
+		exec.Command("ip", "-o", "addr"),
+		exec.Command("awk", `{print $2";"$3";"$4;}`),
+	)
+	lines := strings.Split(Trim(out), "\n")
+	for _, line := range lines {
+		values := strings.SplitN(line, ";", 3)
+		network = append(network,
+			&If{
+				Name:  values[0],
+				Type:  values[1],
+				Value: values[2],
+			})
+	}
+
+	return network, err
+}
+
 func pipes(commands ...*exec.Cmd) (string, error) {
 	if len(commands) < 1 {
 		return "", errors.New("not enough commands passed to pipes()")
