@@ -1,11 +1,11 @@
 #!/bin/bash
 
-./stop_webservice.sh
+./stop_dashboard.sh
 
 rm -rf *
 
 cp -R /home/golang/git/dashboard/* .
 chown http -R *
 
-./start_webservice.sh
+./start_dashboard.sh
 
