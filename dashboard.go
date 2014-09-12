@@ -5,11 +5,12 @@
 package main
 
 import (
-	"github.com/codegangsta/martini"
-	"github.com/codegangsta/martini-contrib/render"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
 )
 
 var (

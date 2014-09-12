@@ -7,11 +7,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/codegangsta/martini"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/go-martini/martini"
 )
 
 func init() {
@@ -163,7 +164,7 @@ func Test_todoapp_api_GetIP(t *testing.T) {
 		t.Fatal("no IPs found")
 	}
 	body := response.Body.String()
-	Contain(t, body, `"`+ips[0]+`",`)
+	Contain(t, body, `"`+ips[0]+`"`)
 
 	var data []string
 	if err := json.Unmarshal([]byte(body), &data); err != nil {
