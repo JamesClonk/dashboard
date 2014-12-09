@@ -5,6 +5,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -23,6 +24,7 @@ var (
 type view struct {
 	Title string
 	Error error
+	Data  interface{}
 }
 
 func init() {
@@ -86,35 +88,49 @@ func setupRoutes(r martini.Router) {
 	r.Get("/api/logged_on", DataHandler("logged_on"))
 	r.Get("/api/users", DataHandler("passwd"))
 	r.Get("/api/network", DataHandler("network"))
+
+	r.Get("/api/debug/:method", DebugHandler)
+}
+
+func DebugHandler(params martini.Params, r render.Render) {
+	method := params["method"]
+	data, err := data(method)
+	view := View("Debug")
+	view.Error = err
+	view.Data = data
+	r.HTML(200, "debug", view)
+}
+
+func data(method string) (data interface{}, err error) {
+	switch method {
+	case "hostname":
+		data, err = hostname()
+	case "ip":
+		data, err = ip(currentHostname)
+	case "cpu":
+		data, err = cpu()
+	case "mem":
+		data, err = mem()
+	case "disk":
+		data, err = df()
+	case "top":
+		data, err = top()
+	case "logged_on":
+		data, err = w()
+	case "passwd":
+		data, err = passwd()
+	case "network":
+		data, err = network()
+	default:
+		data, err = nil, errors.New("unknown method")
+	}
+	return
 }
 
 func DataHandler(method string) func(r render.Render) {
 	return func(r render.Render) {
-		var data interface{}
-		var err error
-
-		switch method {
-		case "hostname":
-			data, err = hostname()
-		case "ip":
-			data, err = ip(currentHostname)
-		case "cpu":
-			data, err = cpu()
-		case "mem":
-			data, err = mem()
-		case "disk":
-			data, err = df()
-		case "top":
-			data, err = top()
-		case "logged_on":
-			data, err = w()
-		case "passwd":
-			data, err = passwd()
-		case "network":
-			data, err = network()
-		}
-
-		if err != nil {
+		data, err := data(method)
+		if err != nil && method != "mem" { // exclude 'mem' for now.. there's some syntax problem on CF with it
 			view := View("500 - Internal Server Error")
 			view.Error = err
 			r.HTML(http.StatusInternalServerError, "500", view)

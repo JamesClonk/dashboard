@@ -207,7 +207,27 @@ func mem() (memory *Memory, err error) {
 		data.FreeH = Trim(values[3])
 	}
 
+	fixMemory(memory)
+
 	return memory, err
+}
+
+func fixMemory(mem *Memory) {
+	fixMemoryData(&mem.RAM)
+	fixMemoryData(&mem.Swap)
+	fixMemoryData(&mem.Total)
+}
+
+func fixMemoryData(data *MemoryData) {
+	if len(data.TotalH) == 0 {
+		data.TotalH = fmt.Sprintf("%dM", data.TotalM)
+	}
+	if len(data.UsedH) == 0 {
+		data.UsedH = fmt.Sprintf("%dM", data.UsedM)
+	}
+	if len(data.FreeH) == 0 {
+		data.FreeH = fmt.Sprintf("%dM", data.FreeM)
+	}
 }
 
 type DiskUsage struct {
