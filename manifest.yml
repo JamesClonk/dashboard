@@ -1,9 +1,10 @@
 ---
 applications:
 - name: dashboard
-  memory: 64M
+  memory: 16M
+  disk: 64M
   instances: 1
   buildpack: https://github.com/cloudfoundry/buildpack-go.git
   host: dashboard
-  domain: beta.scapp.io
+  domain: 10.244.0.34.xip.io
   path: .
