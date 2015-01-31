@@ -88,6 +88,8 @@ func setupRoutes(r martini.Router) {
 	r.Get("/api/logged_on", DataHandler("logged_on"))
 	r.Get("/api/users", DataHandler("passwd"))
 	r.Get("/api/network", DataHandler("network"))
+	r.Get("/api/env", DataHandler("env"))
+	r.Get("/api/headers", DataHandler("headers"))
 
 	r.Get("/api/debug/:method", DebugHandler)
 }
@@ -121,15 +123,23 @@ func data(method string) (data interface{}, err error) {
 		data, err = passwd()
 	case "network":
 		data, err = network()
+	case "env":
+		data = env()
 	default:
 		data, err = nil, errors.New("unknown method")
 	}
 	return
 }
 
-func DataHandler(method string) func(r render.Render) {
-	return func(r render.Render) {
+func DataHandler(method string) func(r render.Render, req *http.Request) {
+	return func(r render.Render, req *http.Request) {
 		data, err := data(method)
+
+		if method == "headers" {
+			data = req.Header
+			err = nil
+		}
+
 		if err != nil && method != "mem" { // exclude 'mem' for now.. there's some syntax problem on CF with it
 			view := View("500 - Internal Server Error")
 			view.Error = err

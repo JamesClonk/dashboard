@@ -476,6 +476,19 @@ func network() (network []*If, err error) {
 	return network, err
 }
 
+type Env struct {
+	Key   string
+	Value string
+}
+
+func env() (env []*Env) {
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+		env = append(env, &Env{pair[0], pair[1]})
+	}
+	return env
+}
+
 func pipes(commands ...*exec.Cmd) (string, error) {
 	if len(commands) < 1 {
 		return "", errors.New("not enough commands passed to pipes()")

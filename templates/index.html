@@ -1,283 +1,341 @@
 <div ng-view>
 
-	<div id="cpu" class="col-sm-6 col-md-6 col-lg-5">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-dashboard fa-fw"></i>  {{CPU.ModelName}}</h3>
-			</div>
+    <div id="cpu" class="col-sm-6 col-md-6 col-lg-5">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-dashboard fa-fw"></i>  {{CPU.ModelName}}</h3>
+            </div>
 
-			<table class="table">
-				<tbody>
-					<tr>
-						<td><span class="label label-warning">Processors / Cores</span></td>
-						<td>{{CPU.Processors}}</td>
-					</tr>
-					<tr>
-						<td><span class="label label-warning">Speed</span></td>
-						<td>{{CPU.Speed}} MHz</td>
-					</tr>
-				</tbody>
-			</table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td><span class="label label-warning">Processors / Cores</span>
+                        </td>
+                        <td>{{CPU.Processors}}</td>
+                    </tr>
+                    <tr>
+                        <td><span class="label label-warning">Speed</span>
+                        </td>
+                        <td>{{CPU.Speed}} MHz</td>
+                    </tr>
+                </tbody>
+            </table>
 
-			<br/>
-			<div class="panel-heading">
-				<h3 class="panel-title">Load Average</h3>
-			</div>
+            <br/>
+            <div class="panel-heading">
+                <h3 class="panel-title">Load Average</h3>
+            </div>
 
-			<table class="table">
-				<thead>
-					<tr>
-						<th>1 min</th>
-						<th>5 min</th>
-						<th>15 min</th>
-						<th>Procs</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>{{CPU.Load1}}</td>
-						<td>{{CPU.Load5}}</td>
-						<td>{{CPU.Load15}}</td>
-						<td>{{CPU.Processes}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>1 min</th>
+                        <th>5 min</th>
+                        <th>15 min</th>
+                        <th>Procs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{CPU.Load1}}</td>
+                        <td>{{CPU.Load5}}</td>
+                        <td>{{CPU.Load15}}</td>
+                        <td>{{CPU.Processes}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<div id="memory" class="col-sm-6 col-md-6 col-lg-5">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-tasks fa-fw"></i> Memory</h3>
-			</div>
+    <div id="memory" class="col-sm-6 col-md-6 col-lg-5">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-tasks fa-fw"></i> Memory</h3>
+            </div>
 
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>Type</th>
-						<th>Total</th>
-						<th>Used</th>
-						<th>Free</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><strong>RAM</strong></td>
-						<td>{{Memory.RAM.TotalH}}</td>
-						<td>{{Memory.RAM.UsedH}}</td>
-						<td>{{Memory.RAM.FreeH}}</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<div class="progress">
-								<div class="progress-bar" ng-class="Memory.RAM.Class" role="progressbar" aria-valuenow="{{Memory.RAM.UsedPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{Memory.RAM.UsedPercentage}}%;">{{Memory.RAM.UsedPercentage}}%</div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td><strong>Swap</strong></td>
-						<td>{{Memory.Swap.TotalH}}</td>
-						<td>{{Memory.Swap.UsedH}}</td>
-						<td>{{Memory.Swap.FreeH}}</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<div class="progress">
-								<div class="progress-bar" ng-class="Memory.Swap.Class" role="progressbar" aria-valuenow="{{Memory.Swap.UsedPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{Memory.Swap.UsedPercentage}}%;">{{Memory.Swap.UsedPercentage}}%</div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td><strong>Total</strong></td>
-						<td>{{Memory.Total.TotalH}}</td>
-						<td>{{Memory.Total.UsedH}}</td>
-						<td>{{Memory.Total.FreeH}}</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<div class="progress">
-								<div class="progress-bar" ng-class="Memory.Total.Class" role="progressbar" aria-valuenow="{{Memory.Total.UsedPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{Memory.Total.UsedPercentage}}%;">{{Memory.Total.UsedPercentage}}%</div>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Total</th>
+                        <th>Used</th>
+                        <th>Free</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>RAM</strong>
+                        </td>
+                        <td>{{Memory.RAM.TotalH}}</td>
+                        <td>{{Memory.RAM.UsedH}}</td>
+                        <td>{{Memory.RAM.FreeH}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div class="progress">
+                                <div class="progress-bar" ng-class="Memory.RAM.Class" role="progressbar" aria-valuenow="{{Memory.RAM.UsedPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{Memory.RAM.UsedPercentage}}%;">{{Memory.RAM.UsedPercentage}}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Swap</strong>
+                        </td>
+                        <td>{{Memory.Swap.TotalH}}</td>
+                        <td>{{Memory.Swap.UsedH}}</td>
+                        <td>{{Memory.Swap.FreeH}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div class="progress">
+                                <div class="progress-bar" ng-class="Memory.Swap.Class" role="progressbar" aria-valuenow="{{Memory.Swap.UsedPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{Memory.Swap.UsedPercentage}}%;">{{Memory.Swap.UsedPercentage}}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong>
+                        </td>
+                        <td>{{Memory.Total.TotalH}}</td>
+                        <td>{{Memory.Total.UsedH}}</td>
+                        <td>{{Memory.Total.FreeH}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div class="progress">
+                                <div class="progress-bar" ng-class="Memory.Total.Class" role="progressbar" aria-valuenow="{{Memory.Total.UsedPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{Memory.Total.UsedPercentage}}%;">{{Memory.Total.UsedPercentage}}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<div id="disk" class="col-sm-12 col-md-11 col-lg-10">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-hdd-o fa-fw"></i> Disk Usage</h3>
-			</div>
+    <div id="disk" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-hdd-o fa-fw"></i> Disk Usage</h3>
+            </div>
 
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>Filesystem</th>
-						<th>Size</th>
-						<th>Used</th>
-						<th>Available</th>
-						<th>Mountpoint</th>
-					</tr>
-				</thead>
-				<tbody ng-repeat="data in Disk">
-					<tr>
-						<td><strong>{{data.Filesystem}}</strong></td>
-						<td>{{data.Size}}</td>
-						<td>{{data.Used}}</td>
-						<td>{{data.Available}}</td>
-						<td><strong>{{data.MountedOn}}</strong></td>
-					</tr>
-					<tr>
-						<td colspan="5">
-							<div class="progress">
-								<div class="progress-bar" ng-class="data.Class" role="progressbar" aria-valuenow="{{data.UsagePercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{data.UsagePercentage}}%;">{{data.UsagePercentage}}%</div>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Filesystem</th>
+                        <th>Size</th>
+                        <th>Used</th>
+                        <th>Available</th>
+                        <th>Mountpoint</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="data in Disk">
+                    <tr>
+                        <td><strong>{{data.Filesystem}}</strong>
+                        </td>
+                        <td>{{data.Size}}</td>
+                        <td>{{data.Used}}</td>
+                        <td>{{data.Available}}</td>
+                        <td><strong>{{data.MountedOn}}</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div class="progress">
+                                <div class="progress-bar" ng-class="data.Class" role="progressbar" aria-valuenow="{{data.UsagePercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{data.UsagePercentage}}%;">{{data.UsagePercentage}}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<div id="processes" class="col-sm-12 col-md-11 col-lg-10">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-cogs fa-fw"></i>  Process Statistics</h3>
-			</div>
+    <div id="processes" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-cogs fa-fw"></i>  Process Statistics</h3>
+            </div>
 
-			<div class="panel-body">
-				<ul class="list-group">
-					<li class="list-group-item" ng-repeat="heading in Processes.Header">{{heading}}</li>
-				</ul>
-			</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="heading in Processes.Header">{{heading}}</li>
+                </ul>
+            </div>
 
-			<div class="panel-heading">
-				<h3 class="panel-title">Processes - Top 10</h3>
-			</div>
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th><a ng-click="SortField = 'User'; reverse = !reverse;">User</a></th>
-						<th><a ng-click="SortField = 'Pid'; reverse = !reverse;">Pid</a></th>
-						<th><a ng-click="SortField = 'Cpu'; reverse = !reverse;">Cpu</a></th>
-						<th><a ng-click="SortField = 'Mem'; reverse = !reverse;">Mem</a></th>
-						<th><a ng-click="SortField = 'Vsz'; reverse = !reverse;">Vsz</a></th>
-						<th><a ng-click="SortField = 'Rss'; reverse = !reverse;">Rss</a></th>
-						<th><a ng-click="SortField = 'Tty'; reverse = !reverse;">Tty</a></th>
-						<!--<th>Stat</th>-->
-						<th><a ng-click="SortField = 'Start'; reverse = !reverse;">Start</a></th>
-						<th><a ng-click="SortField = 'Time'; reverse = !reverse;">Time</a></th>
-						<th><a ng-click="SortField = 'Command'; reverse = !reverse;">Command</a></th>
-					</tr>
-				</thead>
-				<tbody ng-repeat="data in Processes.Processes | orderBy:SortField:reverse | limitTo:10">
-					<tr>
-						<td><strong>{{data.User}}</strong></td>
-						<td>{{data.Pid}}</td>
-						<td>{{data.Cpu}}</td>
-						<td>{{data.Mem}}</td>
-						<td>{{data.Vsz}}</td>
-						<td>{{data.Rss}}</td>
-						<td>{{data.Tty}}</td>
-						<!--<td>{{data.Stat}}</td>-->
-						<td>{{data.Start}}</td>
-						<td>{{data.Time}}</td>
-						<td><small>{{data.Command}}</small></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <div class="panel-heading">
+                <h3 class="panel-title">Processes - Top 10</h3>
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th><a ng-click="SortField = 'User'; reverse = !reverse;">User</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Pid'; reverse = !reverse;">Pid</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Cpu'; reverse = !reverse;">Cpu</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Mem'; reverse = !reverse;">Mem</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Vsz'; reverse = !reverse;">Vsz</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Rss'; reverse = !reverse;">Rss</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Tty'; reverse = !reverse;">Tty</a>
+                        </th>
+                        <!--<th>Stat</th>-->
+                        <th><a ng-click="SortField = 'Start'; reverse = !reverse;">Start</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Time'; reverse = !reverse;">Time</a>
+                        </th>
+                        <th><a ng-click="SortField = 'Command'; reverse = !reverse;">Command</a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="data in Processes.Processes | orderBy:SortField:reverse | limitTo:10">
+                    <tr>
+                        <td><strong>{{data.User}}</strong>
+                        </td>
+                        <td>{{data.Pid}}</td>
+                        <td>{{data.Cpu}}</td>
+                        <td>{{data.Mem}}</td>
+                        <td>{{data.Vsz}}</td>
+                        <td>{{data.Rss}}</td>
+                        <td>{{data.Tty}}</td>
+                        <!--<td>{{data.Stat}}</td>-->
+                        <td>{{data.Start}}</td>
+                        <td>{{data.Time}}</td>
+                        <td><small>{{data.Command}}</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<div id="network" class="col-sm-12 col-md-11 col-lg-10">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-sitemap fa-fw"></i> Network</h3>
-			</div>
+    <div id="network" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-sitemap fa-fw"></i> Network</h3>
+            </div>
 
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Type</th>
-						<th>Value</th>
-					</tr>
-				</thead>
-				<tbody ng-repeat="data in Network">
-					<tr>
-						<td><strong>{{data.Name}}</strong></td>
-						<td>{{data.Type}}</td>
-						<td>{{data.Value}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="data in Network">
+                    <tr>
+                        <td><strong>{{data.Name}}</strong>
+                        </td>
+                        <td>{{data.Type}}</td>
+                        <td>{{data.Value}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<div id="users-online" class="col-sm-12 col-md-11 col-lg-10">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-users fa-fw"></i> Online</h3>
-			</div>
+    <div id="users-online" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-users fa-fw"></i> Online</h3>
+            </div>
 
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>User</th>
-						<th>TTY</th>
-						<th>From</th>
-						<th>Login</th>
-						<th>Idle</th>
-						<th>JCPU</th>
-						<th>PCPU</th>
-						<th>What</th>
-					</tr>
-				</thead>
-				<tbody ng-repeat="data in LoggedOn">
-					<tr>
-						<td><strong>{{data.User}}</strong></td>
-						<td>{{data.TTY}}</td>
-						<td>{{data.From}}</td>
-						<td>{{data.Login}}</td>
-						<td>{{data.Idle}}</td>
-						<td>{{data.JCPU}}</td>
-						<td>{{data.PCPU}}</td>
-						<td>{{data.What}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>TTY</th>
+                        <th>From</th>
+                        <th>Login</th>
+                        <th>Idle</th>
+                        <th>JCPU</th>
+                        <th>PCPU</th>
+                        <th>What</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="data in LoggedOn">
+                    <tr>
+                        <td><strong>{{data.User}}</strong>
+                        </td>
+                        <td>{{data.TTY}}</td>
+                        <td>{{data.From}}</td>
+                        <td>{{data.Login}}</td>
+                        <td>{{data.Idle}}</td>
+                        <td>{{data.JCPU}}</td>
+                        <td>{{data.PCPU}}</td>
+                        <td>{{data.What}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<div id="users" class="col-sm-12 col-md-11 col-lg-10">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-users fa-fw"></i> Users</h3>
-			</div>
+    <div id="users" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-users fa-fw"></i> Users</h3>
+            </div>
 
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>Type</th>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Home</th>
-						<th>Shell</th>
-					</tr>
-				</thead>
-				<tbody ng-repeat="data in Users">
-					<tr>
-						<td>{{data.Type}}</td>
-						<td><strong>{{data.Name}}</strong></td>
-						<td>{{data.Description}}</td>
-						<td>{{data.Home}}</td>
-						<td>{{data.Shell}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Home</th>
+                        <th>Shell</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="data in Users">
+                    <tr>
+                        <td>{{data.Type}}</td>
+                        <td><strong>{{data.Name}}</strong>
+                        </td>
+                        <td>{{data.Description}}</td>
+                        <td>{{data.Home}}</td>
+                        <td>{{data.Shell}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="env" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-keyboard-o fa-fw"></i> Env</h3>
+            </div>
+
+            <table class="table table-condensed">
+                <tbody ng-repeat="data in Env">
+                    <tr>
+                        <td><strong>{{data.Key}}</strong>
+                        </td>
+                        <td>{{data.Value}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="headers" class="col-sm-12 col-md-11 col-lg-10">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-envelope fa-fw"></i> Headers</h3>
+            </div>
+
+            <table class="table table-condensed">
+                <tbody ng-repeat="(key, data) in Headers">
+                    <tr>
+                        <td><strong>{{key}}</strong>
+                        </td>
+                        <td>{{data}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
