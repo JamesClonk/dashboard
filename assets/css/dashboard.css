@@ -22,10 +22,19 @@ a {
 .pointer {
     cursor: pointer;
 }
-#cpu, #memory, #disk, #users, #processes, #network {
+#cf, #cpu, #memory, #disk, #users, #processes, #network, #env, #headers {
     padding-top: 95px;
     margin-top: -75px;
 }
+pre {
+    background-color: #fcfcfc;
+}
+.string { color: darkorange; }
+.number { color: red; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: #555577; }
+
 /*
 ---------------------------------------------------
 Media Queries

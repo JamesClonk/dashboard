@@ -1,7 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 var dashboard = angular.module('dashboard', [
     'ui.bootstrap',
     'dashboardControllers'
@@ -10,8 +6,8 @@ var dashboard = angular.module('dashboard', [
 var dashboardControllers = angular.module('dashboardControllers', []);
 
 // main controller
-dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location', '$anchorScroll',
-    function($scope, $http, $location, $anchorScroll) {
+dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location', '$anchorScroll', '$sce',
+    function($scope, $http, $location, $anchorScroll, $sce) {
 
         $scope.Goto = function(path) {
             $location.path(path);
@@ -137,11 +133,71 @@ dashboardControllers.controller('dashboardCtrl', ['$scope', '$http', '$location'
         $scope.LoadEnv = function(callback) {
             $http.get('/api/env').success(function(data) {
                 $scope.Env = data;
+
+                var found = false;
+                for (var i in data) {
+                    if (data[i].Key == "VCAP_APPLICATION") {
+                        $scope.CloudFoundry = $sce.trustAsHtml($scope.SyntaxHighlight(JSON.parse(data[i].Value)));
+                        found = true;
+                    }
+                }
+
+                // development fallback
+                /*
+                if (!found) {
+                    $scope.CloudFoundry = $sce.trustAsHtml($scope.SyntaxHighlight({
+                        "limits": {
+                            "mem": 16,
+                            "disk": 1024,
+                            "fds": 16384
+                        },
+                        "application_version": "f66320cb-1149-4746-9caf-35df5cc81ab8",
+                        "application_name": "dashboard",
+                        "application_uris": ["dashboard.10.244.0.34.xip.io"],
+                        "version": "f66320cb-1149-4746-9caf-35df5cc81ab8",
+                        "name": "dashboard",
+                        "space_name": "development",
+                        "space_id": "bd20fde8-64c0-4901-ad85-7f1e88214a77",
+                        "uris": ["dashboard.10.244.0.34.xip.io"],
+                        "users": null,
+                        "application_id": "c27e4367-b522-4721-a4ea-1e6e770c9093",
+                        "instance_id": "1f13709b817d496fb32f6a43a76aa285",
+                        "instance_index": 0,
+                        "host": "0.0.0.0",
+                        "port": 61005,
+                        "started_at": "2015-02-01 08:21:42 +0000",
+                        "started_at_timestamp": 1422778902,
+                        "start": "2015-02-01 08:21:42 +0000",
+                        "state_timestamp": 1422778902
+                    }));
+                }
+                */
+
                 if (callback) {
                     callback();
                 }
             });
         };
+
+        $scope.SyntaxHighlight = function(json) {
+            json = JSON.stringify(json, undefined, 4);
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
 
         $scope.LoadHeaders = function(callback) {
             $http.get('/api/headers').success(function(data) {
