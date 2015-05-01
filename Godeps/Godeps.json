@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/JamesClonk/dashboard",
-	"GoVersion": "go1.4.1",
+	"GoVersion": "go1.3.1",
 	"Deps": [
 		{
 			"ImportPath": "github.com/codegangsta/inject",
@@ -9,8 +9,8 @@
 		},
 		{
 			"ImportPath": "github.com/go-martini/martini",
-			"Comment": "v1.0-45-g9641554",
-			"Rev": "9641554ed83e1cc4e737a4990f209f611f92935b"
+			"Comment": "v1.0-73-g8eda3a6",
+			"Rev": "8eda3a62a2d3a84c8d0bd82c0a6e884f872b68b4"
 		},
 		{
 			"ImportPath": "github.com/martini-contrib/render",

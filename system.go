@@ -73,7 +73,7 @@ func cpu() (result *CPU, err error) {
 		exec.Command("cat", "/proc/cpuinfo"),
 		exec.Command("grep", "-c", "^processor"),
 	)
-	processors, err := strconv.Atoi(Trim(out))
+	processors, err := strconv.Atoi(trim(out))
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func cpu() (result *CPU, err error) {
 		exec.Command("head", "-n", "1"),
 		exec.Command("awk", `-F:`, "{print $2;}"),
 	)
-	result.ModelName = Trim(out)
+	result.ModelName = trim(out)
 
 	// cat /proc/cpuinfo | grep '^cpu MHz' | head -n 1 | awk -F":" '{print $2;}'
 	out, err = pipes(
@@ -95,7 +95,7 @@ func cpu() (result *CPU, err error) {
 		exec.Command("head", "-n", "1"),
 		exec.Command("awk", `-F:`, "{print $2;}"),
 	)
-	speed, err := strconv.ParseFloat(Trim(out), 64)
+	speed, err := strconv.ParseFloat(trim(out), 64)
 	if err != nil {
 		return nil, err
 	}
@@ -106,10 +106,10 @@ func cpu() (result *CPU, err error) {
 		exec.Command("cat", "/proc/loadavg"),
 		exec.Command("awk", `{print $1";"$2";"$3";"$4;}`),
 	)
-	fields := strings.SplitN(Trim(out), ";", 43)
+	fields := strings.SplitN(trim(out), ";", 43)
 	var loads []float64
 	for i := 0; i < 3; i++ {
-		number, err := strconv.ParseFloat(Trim(fields[i]), 64)
+		number, err := strconv.ParseFloat(trim(fields[i]), 64)
 		if err != nil {
 			return nil, err
 		}
@@ -151,19 +151,19 @@ func mem() (memory *Memory, err error) {
 		exec.Command("free", "-otm"),
 		exec.Command("awk", `{print $1";"$2";"$3";"$4;}`),
 	)
-	lines := strings.Split(Trim(out), "\n")
+	lines := strings.Split(trim(out), "\n")
 	for _, line := range lines[1:] {
 		values := strings.SplitN(line, ";", 4)
 
-		total, err := strconv.Atoi(Trim(values[1]))
+		total, err := strconv.Atoi(trim(values[1]))
 		if err != nil {
 			return nil, err
 		}
-		used, err := strconv.Atoi(Trim(values[2]))
+		used, err := strconv.Atoi(trim(values[2]))
 		if err != nil {
 			return nil, err
 		}
-		free, err := strconv.Atoi(Trim(values[3]))
+		free, err := strconv.Atoi(trim(values[3]))
 		if err != nil {
 			return nil, err
 		}
@@ -174,7 +174,7 @@ func mem() (memory *Memory, err error) {
 			FreeM:  free,
 		}
 
-		switch Trim(values[0]) {
+		switch trim(values[0]) {
 		case "Mem:":
 			memory.RAM = data
 		case "Swap:":
@@ -189,12 +189,12 @@ func mem() (memory *Memory, err error) {
 		exec.Command("free", "-oth"),
 		exec.Command("awk", `{print $1";"$2";"$3";"$4;}`),
 	)
-	lines = strings.Split(Trim(out), "\n")
+	lines = strings.Split(trim(out), "\n")
 	for _, line := range lines[1:] {
 		values := strings.SplitN(line, ";", 4)
 
 		var data *MemoryData
-		switch Trim(values[0]) {
+		switch trim(values[0]) {
 		case "Mem:":
 			data = &memory.RAM
 		case "Swap:":
@@ -202,12 +202,32 @@ func mem() (memory *Memory, err error) {
 		case "Total:":
 			data = &memory.Total
 		}
-		data.TotalH = Trim(values[1])
-		data.UsedH = Trim(values[2])
-		data.FreeH = Trim(values[3])
+		data.TotalH = trim(values[1])
+		data.UsedH = trim(values[2])
+		data.FreeH = trim(values[3])
 	}
 
+	fixMemory(memory)
+
 	return memory, err
+}
+
+func fixMemory(mem *Memory) {
+	fixMemoryData(&mem.RAM)
+	fixMemoryData(&mem.Swap)
+	fixMemoryData(&mem.Total)
+}
+
+func fixMemoryData(data *MemoryData) {
+	if len(data.TotalH) == 0 {
+		data.TotalH = fmt.Sprintf("%dM", data.TotalM)
+	}
+	if len(data.UsedH) == 0 {
+		data.UsedH = fmt.Sprintf("%dM", data.UsedM)
+	}
+	if len(data.FreeH) == 0 {
+		data.FreeH = fmt.Sprintf("%dM", data.FreeM)
+	}
 }
 
 type DiskUsage struct {
@@ -226,17 +246,25 @@ func df() (diskUsage []*DiskUsage, err error) {
 		}
 	}()
 
-	// df -h | awk '{print $1";"$2";"$3";"$4";"$5";"$6;}'
+	// df -hP | awk '{print $1";"$2";"$3";"$4";"$5";"$6;}'
 	out, err := pipes(
-		exec.Command("df", "-h"),
+		exec.Command("df", "-hP"),
 		exec.Command("awk", `{print $1";"$2";"$3";"$4";"$5";"$6;}`),
 	)
 
-	lines := strings.Split(Trim(out), "\n")
+	lines := strings.Split(trim(out), "\n")
 	for _, line := range lines[1:] {
+		if strings.HasPrefix(line, "Filesystem;") {
+			continue
+		}
+		if strings.Contains(line, "Permission denied") {
+			err = nil
+			continue
+		}
+
 		values := strings.SplitN(line, ";", 6)
 
-		percentage, err := strconv.Atoi(strings.Trim(Trim(values[4]), "%"))
+		percentage, err := strconv.Atoi(strings.Trim(trim(values[4]), "%"))
 		if err != nil {
 			return nil, err
 		}
@@ -287,7 +315,7 @@ func top() (data *Top, err error) {
 		exec.Command("top", "-b", "-n", "1"),
 		exec.Command("head", "-n", "5"),
 	)
-	data.Header = strings.Split(Trim(out), "\n")
+	data.Header = strings.Split(trim(out), "\n")
 
 	// ps -aux | tail -n +2 | grep -v 'ps -aux' | sort -nr -k6
 	out, err = pipes(
@@ -296,29 +324,29 @@ func top() (data *Top, err error) {
 		exec.Command("grep", "-v", "ps -aux"),
 		exec.Command("sort", "-nr", "-k6"),
 	)
-	lines := strings.Split(Trim(out), "\n")
+	lines := strings.Split(trim(out), "\n")
 	for _, line := range lines {
 
 		result := rxPs.FindAllStringSubmatch(line, 11)
 		if len(result) > 0 && !(result[0][5] == "0" && result[0][6] == "0") {
 
-			pid, err := strconv.ParseFloat(Trim(result[0][2]), 64)
+			pid, err := strconv.ParseFloat(trim(result[0][2]), 64)
 			if err != nil {
 				return nil, err
 			}
-			cpu, err := strconv.ParseFloat(Trim(result[0][3]), 64)
+			cpu, err := strconv.ParseFloat(trim(result[0][3]), 64)
 			if err != nil {
 				return nil, err
 			}
-			mem, err := strconv.ParseFloat(Trim(result[0][4]), 64)
+			mem, err := strconv.ParseFloat(trim(result[0][4]), 64)
 			if err != nil {
 				return nil, err
 			}
-			vsz, err := strconv.ParseFloat(Trim(result[0][5]), 64)
+			vsz, err := strconv.ParseFloat(trim(result[0][5]), 64)
 			if err != nil {
 				return nil, err
 			}
-			rss, err := strconv.ParseFloat(Trim(result[0][6]), 64)
+			rss, err := strconv.ParseFloat(trim(result[0][6]), 64)
 			if err != nil {
 				return nil, err
 			}
@@ -335,7 +363,7 @@ func top() (data *Top, err error) {
 					Stat:    result[0][8],
 					Start:   result[0][9],
 					Time:    result[0][10],
-					Command: Trim(result[0][11]),
+					Command: trim(result[0][11]),
 				})
 		}
 	}
@@ -361,14 +389,14 @@ func w() (loggedOn []*LoggedOn, err error) {
 		}
 	}()
 
-	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih | grep -v 'w -ih
+	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih | grep -v 'w -ih'
 	os.Setenv("PROCPS_USERLEN", "24")
 	os.Setenv("PROCPS_FROMLEN", "64")
 	out, err := pipes(
 		exec.Command("w", "-ih"),
 		exec.Command("grep", "-v", "w -ih"),
 	)
-	lines := strings.Split(Trim(out), "\n")
+	lines := strings.Split(trim(out), "\n")
 	for _, line := range lines {
 		result := rxW.FindAllStringSubmatch(line, 8)
 		if len(result) > 0 {
@@ -381,7 +409,7 @@ func w() (loggedOn []*LoggedOn, err error) {
 					Idle:  result[0][5],
 					JCPU:  result[0][6],
 					PCPU:  result[0][7],
-					What:  Trim(result[0][8]),
+					What:  trim(result[0][8]),
 				})
 		}
 	}
@@ -408,7 +436,7 @@ func passwd() (users []*User, err error) {
 	out, err := pipes(
 		exec.Command("awk", "-F:", `{ if ($3<=499) print "system;"$1";"$5";"$6";"$7; else print "user;"$1";"$5";"$6";"$7; }`, "/etc/passwd"),
 	)
-	lines := strings.Split(Trim(out), "\n")
+	lines := strings.Split(trim(out), "\n")
 	for _, line := range lines {
 		values := strings.SplitN(line, ";", 5)
 		users = append(users,
@@ -442,7 +470,7 @@ func network() (network []*If, err error) {
 		exec.Command("ip", "-o", "addr"),
 		exec.Command("awk", `{print $2";"$3";"$4;}`),
 	)
-	lines := strings.Split(Trim(out), "\n")
+	lines := strings.Split(trim(out), "\n")
 	for _, line := range lines {
 		values := strings.SplitN(line, ";", 3)
 		network = append(network,
@@ -454,6 +482,19 @@ func network() (network []*If, err error) {
 	}
 
 	return network, err
+}
+
+type Env struct {
+	Key   string
+	Value string
+}
+
+func env() (env []*Env) {
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+		env = append(env, &Env{pair[0], pair[1]})
+	}
+	return env
 }
 
 func pipes(commands ...*exec.Cmd) (string, error) {
@@ -484,4 +525,8 @@ func pipes(commands ...*exec.Cmd) (string, error) {
 	}
 
 	return stdout.String(), nil
+}
+
+func trim(input string) string {
+	return strings.Trim(input, "\t\n\f\r ")
 }

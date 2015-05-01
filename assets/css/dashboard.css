@@ -4,40 +4,45 @@ Page
 */
 
 body {
-	padding-top: 75px;
-	padding-bottom: 40px;
+    padding-top: 75px;
+    padding-bottom: 40px;
 }
-
 .fork-me {
-	position: fixed; 
-	z-index:9001; 
-	top: 0px; 
-	right: 0px; 
-	border: 0px; 
-	width: 149px; 
-	height: 149px;
+    position: fixed;
+    z-index: 9001;
+    top: 0px;
+    right: 0px;
+    border: 0px;
+    width: 149px;
+    height: 149px;
 }
-
 a {
-	cursor: pointer;
+    cursor: pointer;
 }
 .pointer {
-	cursor: pointer;
+    cursor: pointer;
 }
-
-#cpu, #memory, #disk, #users, #processes, #network {
-	padding-top: 95px; 
-	margin-top: -75px;
+#cf, #cpu, #memory, #disk, #users, #processes, #network, #env, #headers {
+    padding-top: 95px;
+    margin-top: -75px;
 }
+pre {
+    background-color: #fcfcfc;
+}
+.string { color: darkorange; }
+.number { color: red; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: #555577; }
 
 /*
 ---------------------------------------------------
 Media Queries
 */
 
-@media (max-width: 767px) {
-	.fork-me {
-		z-index:-1; 
-		visibility: hidden;
-	}
+@media (max-width: 1016px) {
+    .fork-me {
+        z-index: -1;
+        visibility: hidden;
+    }
 }

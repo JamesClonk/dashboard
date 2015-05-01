@@ -1,6 +1,6 @@
 # Martini  [![wercker status](https://app.wercker.com/status/9b7dbc6e2654b604cd694d191c3d5487/s/master "wercker status")](https://app.wercker.com/project/bykey/9b7dbc6e2654b604cd694d191c3d5487)[![GoDoc](https://godoc.org/github.com/go-martini/martini?status.png)](http://godoc.org/github.com/go-martini/martini)
 
-마티니(Martini)는 강력하고 손쉬운 웹애플리캐이션 / 웹서비스개발을 위한 Golang 패키지입니다.
+마티니(Martini)는 강력하고 손쉬운 웹애플리케이션 / 웹서비스개발을 위한 Golang 패키지입니다.
 
 ## 시작하기
 
@@ -42,7 +42,7 @@ go run server.go
 GoDoc [문서(documentation)](http://godoc.org/github.com/go-martini/martini)
 
 문제는 전부다 영어로 되어 있다는 건데요 -_-;;;
-나는 한글 아니면 보기다 싫어! 이런 분들은 아래 링크를 참조하세요
+나는 한글 아니면 보기 싫다! 하는 분들은 아래 링크를 참조하세요
 - [golang-korea](https://code.google.com/p/golang-korea/)
 - 혹은 ([RexK](http://github.com/RexK))의 이메일로 연락주세요.
 
@@ -286,7 +286,7 @@ m.Use(func(c martini.Context, log *log.Logger){
   log.Println("request전입니다.")
 
   c.Next()
-  
+
   log.Println("request후 입니다.")
 })
 ~~~
@@ -336,12 +336,12 @@ func init() {
 ### 포트와 호스트는 어떻게 바꾸나요?
 
 마티니의 `Run` 함수는 PORT와 HOST 환경변수를 이용하는데, 설정이 안되어 있다면 localhost:3000으로 설정 되어 집니다.
-좀더 유연하게 설정을 하고 싶다면, `http.ListenAndServe`를 활용해 주세요.
+좀더 유연하게 설정을 하고 싶다면, `martini.RunOnAddr`를 활용해 주세요.
 
 ~~~ go
   m := martini.Classic()
   // ...
-  log.Fatal(http.ListenAndServe(":8080", m))
+  log.Fatal(m.RunOnAddr(":8080"))
 ~~~
 
 ### 라이브 포드 리로드?

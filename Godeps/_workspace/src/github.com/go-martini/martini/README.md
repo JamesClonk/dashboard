@@ -61,6 +61,7 @@ GoDoc [documentation](http://godoc.org/github.com/go-martini/martini)
 * Lots of good handlers/middlewares to use.
 * Great 'out of the box' feature set.
 * **Fully compatible with the [http.HandlerFunc](http://godoc.org/net/http#HandlerFunc) interface.**
+* Default document serving (e.g., for serving AngularJS apps in HTML5 mode).
 
 ## More Middleware
 For more middleware and functionality, check out the repositories in the  [martini-contrib](https://github.com/martini-contrib) organization.
@@ -254,6 +255,20 @@ You can serve from more directories by adding more [martini.Static](http://godoc
 m.Use(martini.Static("assets")) // serve from the "assets" directory as well
 ~~~
 
+#### Serving a Default Document
+You can specify the URL of a local file to serve when the requested URL is not
+found. You can also specify an exclusion prefix so that certain URLs are ignored.
+This is useful for servers that serve both static files and have additional
+handlers defined (e.g., REST API). When doing so, it's useful to define the
+static handler as a part of the NotFound chain.
+
+The following example serves the `/index.html` file whenever any URL is
+requested that does not match any local file and does not start with `/api/v`:
+~~~ go
+static := martini.Static("assets", martini.StaticOptions{Fallback: "/index.html", Exclude: "/api/v"})
+m.NotFound(static, http.NotFound)
+~~~
+
 ## Middleware Handlers
 Middleware Handlers sit between the incoming http request and the router. In essence they are no different than any other Handler in Martini. You can add a middleware handler to the stack like so:
 ~~~ go
@@ -343,12 +358,12 @@ func init() {
 ### How do I change the port/host?
 
 Martini's `Run` function looks for the PORT and HOST environment variables and uses those. Otherwise Martini will default to localhost:3000.
-To have more flexibility over port and host, use the `http.ListenAndServe` function instead.
+To have more flexibility over port and host, use the `martini.RunOnAddr` function instead.
 
 ~~~ go
   m := martini.Classic()
   // ...
-  log.Fatal(http.ListenAndServe(":8080", m))
+  log.Fatal(m.RunOnAddr(":8080"))
 ~~~
 
 ### Live code reload?

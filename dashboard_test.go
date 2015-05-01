@@ -65,7 +65,7 @@ func Test_todoapp_assets(t *testing.T) {
 
 	body = response.Body.String()
 	Contain(t, body, `.fork-me {`)
-	Contain(t, body, `@media (max-width: 767px) {`)
+	Contain(t, body, `@media (max-width: 1016px) {`)
 }
 
 func Test_todoapp_404(t *testing.T) {

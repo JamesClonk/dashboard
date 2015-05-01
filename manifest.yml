@@ -1,0 +1,10 @@
+---
+applications:
+- name: dashboard
+  memory: 16M
+  disk: 64M
+  instances: 1
+  buildpack: https://github.com/cloudfoundry/buildpack-go.git
+  host: dashboard
+  domain: 10.244.0.34.xip.io
+  path: .
