@@ -246,9 +246,9 @@ func df() (diskUsage []*DiskUsage, err error) {
 		}
 	}()
 
-	// df -h | awk '{print $1";"$2";"$3";"$4";"$5";"$6;}'
+	// df -hP | awk '{print $1";"$2";"$3";"$4";"$5";"$6;}'
 	out, err := pipes(
-		exec.Command("df", "-h"),
+		exec.Command("df", "-hP"),
 		exec.Command("awk", `{print $1";"$2";"$3";"$4";"$5";"$6;}`),
 	)
 
@@ -385,7 +385,7 @@ func w() (loggedOn []*LoggedOn, err error) {
 		}
 	}()
 
-	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih | grep -v 'w -ih
+	// PROCPS_USERLEN=24 PROCPS_FROMLEN=64 w -ih | grep -v 'w -ih'
 	os.Setenv("PROCPS_USERLEN", "24")
 	os.Setenv("PROCPS_FROMLEN", "64")
 	out, err := pipes(
