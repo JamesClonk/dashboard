@@ -257,6 +257,10 @@ func df() (diskUsage []*DiskUsage, err error) {
 		if strings.HasPrefix(line, "Filesystem;") {
 			continue
 		}
+		if strings.Contains(line, "Permission denied") {
+			err = nil
+			continue
+		}
 
 		values := strings.SplitN(line, ";", 6)
 
